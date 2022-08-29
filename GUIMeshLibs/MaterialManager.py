@@ -19,14 +19,14 @@
 #########################################################################################################
 #Libraries
 import sys
-import Tkinter as tk
-import tkFileDialog
-import tkSimpleDialog
-import tkMessageBox
+import tkinter as tk
+from tkinter import filedialog as tkFileDialog
+from tkinter import simpledialog as tkSimpleDialog
+from tkinter import messagebox as tkMessageBox
 import os.path
 import time
 import math
-from Materials import *
+from GUIMeshLibs.Materials import *
 
 
 ##############################################
@@ -52,11 +52,11 @@ def Pressed_Load_Mats_Dir():
     New_Mats_List=Load_Materials()#See Materials Library
     if (New_Mats_List!=0):
         if len(New_Mats_List)==0:
-            print "No materials found in Database"
+            print("No materials found in Database")
             tkMessageBox.showinfo("Error", '"No materials found in Database.') 
         for i in New_Mats_List:
             if i.Name in temp_name_list:
-                print "Error: "+i.Name+" is already used."
+                print("Error: "+i.Name+" is already used.")
             else:
                 MatManager_Material_List.append(i)
                 mylist_mat_db.insert(tk.END, i.Name)
@@ -73,7 +73,7 @@ def Pressed_Delete_Mats():
         del i
     mylist_mat_db.delete(0, tk.END)
     MatManager_Material_List=[]
-    print "Number of Materials:",len(MatManager_Material_List)
+    print("Number of Materials:",len(MatManager_Material_List))
 
 ##########################################
 #####Save Session Materials in Folder#####
@@ -106,15 +106,15 @@ def Pressed_Load_Mat():
 
     newmat=Load_Material(path_to_material)#See Material Library
     if newmat==0:
-        print "Error: Material was not loaded."
+        print("Error: Material was not loaded.")
     else:
         if newmat.Name in temp_name_list:
-            print "Error: "+i.Name+" is already used."
+            print("Error: "+i.Name+" is already used.")
             tkMessageBox.showinfo("Error", "Error: "+i.Name+" is already used.")    
         else:
             MatManager_Material_List.append(newmat)
             mylist_mat_db.insert(tk.END, newmat.Name)
-            print "Material loaded successfully."
+            print("Material loaded successfully.")
             
 ##########################################
 #######Pressed Create Material############
@@ -134,7 +134,7 @@ def Save_Material(name,density,elements,fractions):
     for i in MatManager_Material_List:
         temp_name_list.append(i.Name)
     if name.get() in temp_name_list:
-        print "Error: "+name.get()+" is already used."
+        print("Error: "+name.get()+" is already used.")
         tkMessageBox.showinfo("Error", "Error: "+name.get()+" is already used.") 
         return 0
     check_fractions=0.0
@@ -148,15 +148,15 @@ def Save_Material(name,density,elements,fractions):
                     newmat_elements_list.append(elements[i].get())
                     newmat_elements_list.append(fractions[i].get())
                 else:
-                    print "Chosen Element: "+elements[i].get()+" not in DB."
+                    print("Chosen Element: "+elements[i].get()+" not in DB.")
                     tkMessageBox.showinfo("Error", "Chosen Element: "+elements[i].get()+" not in DB.") 
                     return 0
             except ValueError:
-                print "Error: Fraction #"+str(i+1)+" not a float."
+                print("Error: Fraction #"+str(i+1)+" not a float.")
                 tkMessageBox.showinfo("Error", "Error: Fraction #"+str(i+1)+"not a float.") 
                 return 0
     except ValueError:
-        print "Error: Material density either not a float or <1."
+        print("Error: Material density either not a float or <1.")
         tkMessageBox.showinfo("Error","Material density either not a float or <1.") 
         return 0
     if(check_fractions==1.0):
@@ -165,7 +165,7 @@ def Save_Material(name,density,elements,fractions):
         mylist_mat_db.insert(tk.END, newmat.Name)
         top.destroy()
     else:
-        print "Error: Element fraction sum different than 1."
+        print("Error: Element fraction sum different than 1.")
         tkMessageBox.showinfo("Error","Error: Element fraction sum different than 1.")
         return 0
 
@@ -177,7 +177,7 @@ def Pressed_Create_Mat():
     global MatManager_root
 
     for i in MatManager_Material_List:
-        print i.Name
+        print(i.Name)
     total_elements=0.0
     n_comp=tkSimpleDialog.askinteger('Create Material ', 'Choose the number of elements.');
     if n_comp<1:
@@ -257,20 +257,20 @@ def mat_info(evt):
     Frac_labels=[]
     for i in MatManager_Element_List:
         if value==i.Name:
-            print i.Name, i.Density
+            print(i.Name, i.Density)
             Mat_Name.set(i.Name)
             Mat_Density.set("Density: "+str(i.Density)+" g/cm3")
             return
     for i in MatManager_Material_List:
         if value==i.Name:
-            print i.Name, i.Density, i.Nelements
+            print(i.Name, i.Density, i.Nelements)
             Mat_Name.set(i.Name)
             Mat_Density.set("Density: "+str(i.Density)+" g/cm3")
             HSF=0.1
             if i.Nelements>10:
                 HSF=(1-0.105)/i.Nelements
             for j in range (0, i.Nelements):
-                print i.Elements[j], i.ElementFractions[j]
+                print(i.Elements[j], i.ElementFractions[j])
                 Ele_labels.append(tk.Message( Mat_Elements_Frame, text=str(i.Elements[j]),width=int(500),font=("Helvetica", 14)))
                 Ele_labels[j].place(relx=0.00, rely=0.105+HSF*j,relwidth=0.5,relheight=HSF)
                 

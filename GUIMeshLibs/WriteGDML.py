@@ -20,10 +20,13 @@
 
 #Libraries
 import os
-import Materials
-import Volumes
-import tkFileDialog
-import tkMessageBox
+from GUIMeshLibs import Materials
+from GUIMeshLibs import Volumes
+
+import tkinter as tk
+from tkinter import filedialog as tkFileDialog
+from tkinter import simpledialog as tkSimpleDialog
+from tkinter import messagebox as tkMessageBox
 
 #Write Mother.gdml file
 def CreateMother(dir_path,object_list,world):
@@ -125,7 +128,7 @@ def CreateGDML(obj,vol_numb,path_to_mesh):
 #Main function called to write all GDML files
 def Write_Files(obj_list, world_list):
     write_dir=tkFileDialog.askdirectory()
-    print write_dir
+    print(write_dir)
     # Create Volumes Directory (does not remove folders)
     try:
         os.mkdir(str(write_dir)+"/Volumes")

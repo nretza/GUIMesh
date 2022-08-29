@@ -18,12 +18,12 @@
 #                                                                                                       #
 #########################################################################################################
 #Libraries
-import Materials
-import Volumes
+from GUIMeshLibs import Materials
+from GUIMeshLibs import Volumes
 
 #Add FreeCAD directory to os path
 def Find_FreeCAD_Dir():
-        import tkFileDialog
+        from tkinter import filedialog as tkFileDialog
         import sys
         import os.path
         path_to_FreeCAD=tkFileDialog.askdirectory()
@@ -37,30 +37,30 @@ def Find_FreeCAD_Dir():
 
 #Add FreeCAD directory to os path
 def Load_STEP_File(doc_status,material):
-    import tkFileDialog
+    from tkinter import filedialog as tkFileDialog
     import FreeCAD
     import Import
-    import FreeCADGui
-    import Draft
-    import Part
+    #import FreeCADGui
+    #import Draft
+    #import Part
     #prepares and opens STEP file with FreeCADs
     path_to_file = tkFileDialog.askopenfilename()
     if( path_to_file[-5:]==".STEP" or path_to_file[-5:]==".step"or path_to_file[-4:]==".stp"):
         if (doc_status):    #If a file was already open the document associated with it must be closed
             FreeCAD.closeDocument("Unnamed")
-            print "Previous document closed"
+            print("Previous document closed")
         FreeCAD.newDocument("Unnamed")
         FreeCAD.setActiveDocument("Unnamed")
         try: 
             Import.insert(path_to_file,"Unnamed") #FreeCAD attempts to open file - If the format is wrong it will be detected
-            print "File read successfuly"
+            print("File read successfuly")
             list_of_objects=[]
             for obj in FreeCAD.ActiveDocument.Objects:
                 list_of_objects.append(Volumes.Volume(obj,material,0.1,1));
             return list_of_objects
         except:
-            print "Error reading file. Format might be incorrect."
+            print("Error reading file. Format might be incorrect.")
             return 0
     else:
-        print "Error with file extension"
+        print("Error with file extension")
         return 0
