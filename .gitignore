@@ -1,6 +1,12 @@
+# GUIMesh I/O
+*.gdml
+*.STEP
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[cod]
+*.pyo
+*.pyd
+*.pyc
 *$py.class
 
 # C extensions
