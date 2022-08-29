@@ -47,6 +47,13 @@ def Pressed_Find_FreeCAD_Dir():
     print("Pressed Find FreeCAD Dir")
     #Import FreeCAD - essential to the whole program
     try:
+        
+        #best guess on freecad install dirs
+        sys.path.append("/lib/freecad-daily/lib")
+        sys.path.append("/lib/freecad/lib")
+        sys.path.append("/usr/lib/freecad-daily/lib")
+        sys.path.append("/usr/lib/freecad/lib")
+
         import FreeCAD
         FreeCAD_status="FreeCAD loaded"
         label_FreeCAD_path.configure(text=FreeCAD_status)

@@ -311,7 +311,7 @@ def Draw_MatManager(imported_Element_List,imported_Material_List):
     pos_y=0.25
     pos_y_os=0.115
     font_size=20*p_h*p_w
-    MatManager_root.state("zoomed")
+    MatManager_root.state("normal")
 
     #Menu
     button_menu_label = tk.Label(MatManager_root, width=19-int(70./(font_size)),height=int(1*p_h), text = "Menu",borderwidth=5,relief="solid",font=("Helvetica", int(18*p_w)),bg="#e0e0d1")
