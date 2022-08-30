@@ -40,10 +40,7 @@ def Load_STEP_File(doc_status,material):
     from tkinter import filedialog as tkFileDialog
     import FreeCAD
     import Import
-    #import FreeCADGui
-    #import Draft
-    #import Part
-    #prepares and opens STEP file with FreeCADs
+    #prepares and opens STEP file with FreeCAD
     path_to_file = tkFileDialog.askopenfilename()
     if( path_to_file[-5:]==".STEP" or path_to_file[-5:]==".step"or path_to_file[-4:]==".stp"):
         if (doc_status):    #If a file was already open the document associated with it must be closed
@@ -56,7 +53,11 @@ def Load_STEP_File(doc_status,material):
             print("File read successfuly")
             list_of_objects=[]
             for obj in FreeCAD.ActiveDocument.Objects:
-                list_of_objects.append(Volumes.Volume(obj,material,0.1,1));
+                if hasattr(obj,"Shape"): # check to catch stuff like coordinate systems, planes etc.
+                    list_of_objects.append(Volumes.Volume(obj,material,0.1,1))
+                    print(f"Volume loaded:      {obj.Label}")
+                else:
+                    print(f"Volume rejected:    {obj.Label}")
             return list_of_objects
         except:
             print("Error reading file. Format might be incorrect.")

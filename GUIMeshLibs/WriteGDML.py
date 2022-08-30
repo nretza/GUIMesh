@@ -33,7 +33,7 @@ def CreateMother(dir_path,object_list,world):
     #write headers and globals
     F=open(str(dir_path)+"/mother.gdml","w")
     F.write('<?xml version="1.0" encoding="UTF-8" ?>\n')
-    F.write('<gdml xmlns:gdml="../schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schema/gdml.xsd" >\n')
+    F.write('<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd" >\n')
     F.write('<define>\n')
     F.write('<position name="center" x="0" y="0" z="0"/>\n')
     F.write('<rotation name="identity" x="0" y="0" z="0"/>\n')
@@ -60,7 +60,7 @@ def CreateMother(dir_path,object_list,world):
     for i in range(0,len(object_list)):
         if (object_list[i].VolumeGDMLoption==1):
             F.write('<physvol>\n')
-            F.write('<file name="Volumes/'+str(object_list[i].VolumeCAD.Label)+str(i+1)+'.gdml"/>\n')
+            F.write(f'<file name="{os.path.join(dir_path, "Volumes")}/{str(object_list[i].VolumeCAD.Label)}_{str(i+1)}.gdml"/>\n')
             F.write('<positionref ref="center"/>\n')
             F.write('<rotationref ref="identity"/>\n')
             F.write('</physvol>\n')
@@ -79,7 +79,7 @@ def CreateGDML(obj,vol_numb,path_to_mesh):
     precision=obj.VolumeMMD   
     triangles = obj.VolumeCAD.Shape.tessellate(precision) #the number represents the precision of the tessellation #returns matrix with triangles vertices
     count=0
-    gdml_name=str(obj.VolumeCAD.Label)+str(vol_numb) #gdml file name derives from volume label and number
+    gdml_name=str(obj.VolumeCAD.Label)+ "_" + str(vol_numb) #gdml file name derives from volume label and number
     #write file
     F=open(str(path_to_mesh)+"/Volumes/"+gdml_name+".gdml","w")
     #write header

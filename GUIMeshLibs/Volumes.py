@@ -29,6 +29,7 @@ from tkinter import messagebox as tkMessageBox
 class Volume():
     def __init__(self,myvolume,mymaterial,myMMD,myGDMLoption):
         self.VolumeCAD=myvolume
+        self.VolumeCAD.Label = str(self.VolumeCAD.Label).replace(" ", "_")
         self.VolumeMaterial=mymaterial
         self.VolumeMMD=myMMD
         self.VolumeGDMLoption=myGDMLoption
@@ -48,7 +49,7 @@ def LoadVolumeProperties(list_of_objects,Element_List,Material_List):
     path_to_file = tkFileDialog.askopenfilename()
     print("Checking file extension...")
     if (path_to_file[-4:]==".csv"):
-        print("File extension is correct.")
+        print("File extension '.csv' is correct.")
         properties_csv_file=open(str(path_to_file),"r")
         properties=properties_csv_file.readlines()
         properties_csv_file.close()
