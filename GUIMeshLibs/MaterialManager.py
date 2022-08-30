@@ -197,18 +197,20 @@ def Pressed_Create_Mat():
     blanck_label = tk.Label(top, text=" ").grid(row=2,column=0)
     blanck2_label = tk.Label(top, text="                    ").grid(row=0,column=2)
     n_elements_label = tk.Label(top, text='Number of elements: '+str(n_comp),font=("Helvetica",12)).grid(row=3,column=0,columnspan=2,sticky="W")
-
+    blanck3_label = tk.Label(top, text=" ").grid(row=4,column=0)
+    blanck4_label = tk.Label(top, text="                    ").grid(row=4,column=2)
+    name_label = tk.Label(top, text="Element Name",font=("Helvetica",12)).grid(row=5,column=1,sticky="W")
+    fraction_label = tk.Label(top, text="Element Fraction",font=("Helvetica",12)).grid(row=5,column=2,sticky="W")
     entrys_name = []
     entrys_fraction = []
     labels_name = []
     labels_fraction = []
     for i in range(0,n_comp):
-        labels_name.append(tk.Label(top, text="Element "+ str(i+1)+" name",font=("Helvetica",12)).grid(row=4+2*(i%8),column=2*(i/8),sticky="W"))
+        labels_name.append(tk.Label(top, text="Element "+ str(i+1),font=("Helvetica",12)).grid(row=6+i,column=0,sticky="W"))
         entrys_name.append(tk.Entry(top, bd =5))
-        entrys_name[i].grid(row=4+2*(i%8), column=2*(i/8)+1)
-        labels_fraction.append(tk.Label(top, text="Element "+ str(i+1)+" fraction",font=("Helvetica",12)).grid(row=5+2*(i%8),column=2*(i/8),sticky="W"))
+        entrys_name[i].grid(row=6+i, column=1)
         entrys_fraction.append(tk.Entry(top, bd =5))
-        entrys_fraction[i].grid(row=5+2*(i%8), column=2*(i/8)+1)
+        entrys_fraction[i].grid(row=6+i, column=2)
 
     for i in range (0,21):
         top.rowconfigure(i, weight=1) 
