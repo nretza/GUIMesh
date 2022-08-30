@@ -32,7 +32,7 @@ try:
     from tkinter import simpledialog as tkSimpleDialog
     from tkinter import messagebox as tkMessageBox
 except:
-    print("Could not import Tkinter. It might not be installed or the instalation  might have a different name.")
+    print("Could not import Tkinter. It might not be installed or the installation  might have a different name.")
 
 try:
     from GUIMeshLibs import Materials, MaterialManager, Volumes, LoadOP, WriteGDML
@@ -42,12 +42,12 @@ except:
 #################################################################
 ######################Pressed Find FreeCAD#######################
 #################################################################
+
 def Pressed_Find_FreeCAD_Dir():
     global FreeCAD_status
     print("Pressed Find FreeCAD Dir")
     #Import FreeCAD - essential to the whole program
     try:
-        
         #best guess on freecad install dirs
         sys.path.append("/lib/freecad-daily/lib")
         sys.path.append("/lib/freecad/lib")
@@ -60,13 +60,14 @@ def Pressed_Find_FreeCAD_Dir():
         tkMessageBox.showinfo("Success", "FreeCAD loaded.")
         print("FreeCAD loaded.")
     except:
-        r=LoadOP.Find_FreeCAD_Dir() #Load FreeCAD path to python - See LoadOP library
-        if r:
+        LoadOP.Find_FreeCAD_Dir() #Load FreeCAD path to python - See LoadOP library
+        try:
+            import FreeCAD
             FreeCAD_status="FreeCAD loaded"
             label_FreeCAD_path.configure(text=FreeCAD_status)
             tkMessageBox.showinfo("Success", "FreeCAD loaded.")
             print("FreeCAD is now loaded")
-        else:
+        except:
             tkMessageBox.showinfo("Warning", "There was an error loading FreeCAD.")
             print("There was an error loading FreeCAD.")
     root.update()
@@ -74,6 +75,7 @@ def Pressed_Find_FreeCAD_Dir():
 #################################################################
 #########################Pressed Read STEP#######################
 #################################################################
+
 def Pressed_Read_STEP():
     global STEP_file_status
     global mylist_names
@@ -112,7 +114,9 @@ def Pressed_Read_STEP():
 #################################################################
 #########################Pressed World Size######################
 #################################################################
-#######Save new world size - default is 1 m * 1 m *1 m
+
+####### Save new world size - default is 1 m * 1 m *1 m
+
 def Save_World_Button(x,y,z,top):
     global world_dimensions
     print(world_dimensions[0], world_dimensions[1], world_dimensions[2])
@@ -130,6 +134,7 @@ def Save_World_Button(x,y,z,top):
     print(world_dimensions[0], world_dimensions[1], world_dimensions[2])
 
 ########interface to select new world size
+
 def Pressed_World_Size():
     global world_dimensions
     print("Pressed_World_Size")
@@ -157,6 +162,7 @@ def Pressed_World_Size():
 #################################################################
 #############Save object properties into a csv file.#############
 #################################################################
+
 def Pressed_Save_Properties():
     global list_of_objects
     print("Pressed Save Properties")
@@ -165,6 +171,7 @@ def Pressed_Save_Properties():
 #################################################################
 #############Load object properties into a csv file##############
 #################################################################
+
 #Even if there are errors (material for instance) all correct information is loaded
 def Pressed_Load_Properties():
     global list_of_objects
@@ -176,6 +183,7 @@ def Pressed_Load_Properties():
 #################################################################
 ################Material Manager - New window####################
 #################################################################
+
 def Pressed_Material_Manager():
     global Element_List
     global Material_List
@@ -185,6 +193,7 @@ def Pressed_Material_Manager():
 #################################################################
 ############################Write GDML###########################
 #################################################################
+
 def Pressed_Write_GDML():
     global list_of_objects
     global world_dimensions
@@ -198,13 +207,14 @@ def Pressed_Write_GDML():
 #################Selected Volume Operations######################
 #################################################################
 #Change Material
+
 def Pressed_Change_Material():
     global selected_volume_index
     global Element_List
     global Material_List
     print("Pressed_Change_Volume_Material")
 
-    newMaterial=tkSimpleDialog.askstring('Material ', 'Select new Material');
+    newMaterial=tkSimpleDialog.askstring('Material ', 'Select new Material')
     check_mat=0 #Check if Material exists
     for ele in Element_List:
         if newMaterial==ele.Name:
@@ -233,7 +243,7 @@ def Pressed_Change_Material():
 def Pressed_Change_MMD():
     global list_of_objects
     print("Pressed_Change_MMD")
-    newMMD=tkSimpleDialog.askfloat('MMD ', 'Select new MMD value.');
+    newMMD=tkSimpleDialog.askfloat('MMD ', 'Select new MMD value.')
     try:
         if float(newMMD)>0:
             print("MMD ok")
@@ -254,8 +264,8 @@ def Pressed_Change_MMD():
 def Pressed_Change_GDML_Option():
     global list_of_objects
     print("Pressed_Change_GDML_Option")
-    newGDMLoption=tkSimpleDialog.askinteger('Write Option', 'Select Write Option.'); #>=1 write - <1 do not write
-    if newGDMLoption<0:
+    newGDMLoption=tkSimpleDialog.askinteger('Write Option', 'Select Write Option.') #>=1 write - <1 do not write
+    if newGDMLoption<1:
         newGDMLoption=0
     else:
         newGDMLoption=1
@@ -318,15 +328,18 @@ def vol_info(evt):
 #################################################################
 #####################Pressed Exit_Program########################
 #################################################################
+
 def Pressed_Exit_Program():
     root.destroy()
 
 #####################################################################################
 ##################################Main###############################################
 #####################################################################################
+
 ##################    
 #Global variables#
 ##################
+
 FreeCAD_status="FreeCAD not loaded"
 STEP_file_status="No file has been loaded"
 file_status=0
@@ -339,6 +352,7 @@ Material_List=[]
 #####################################################################################
 #######################################Canvas########################################
 #####################################################################################
+
 #Window 
 root = tk.Tk()
 s_w = root.winfo_screenwidth()
@@ -355,10 +369,10 @@ font_size=20*p_h*p_w
 #Draw interface regions
 button_menu=tk.Canvas(root,bd=5,bg="black")
 button_menu.place(relx=0.01,rely=0.24,relwidth=0.12,relheight=0.59)
-button_menu_rectangle=button_menu.create_rectangle(0, 0, 1000, 1000, fill="#ccccb3");
+button_menu_rectangle=button_menu.create_rectangle(0, 0, 1000, 1000, fill="#ccccb3")
 lists_menu=tk.Canvas(root,bd=5,bg="black")
 lists_menu.place(relx=0.209,rely=0.24,relwidth=0.4015,relheight=0.59)
-lists_menu.create_rectangle(0, 0, s_w, s_h, fill="#ccccb3");
+lists_menu.create_rectangle(0, 0, s_w, s_h, fill="#ccccb3")
 vol_properties_menu=tk.Canvas(root, bd=5,bg="black")
 vol_properties_menu.place(relx=0.7,rely=0.24,relwidth=0.295,relheight=0.59)
 vol_properties_menu.create_rectangle(0, 0, s_w, s_h, fill="#ccccb3")
@@ -390,6 +404,7 @@ description_label.place(relx= 0.25,rely = 0.1,relwidth=0.55, relheight=0.05)
 #####################################################################################
 ###############################Menu Buttons##########################################
 #####################################################################################
+
 #FreeCAD button
 button_FreeCAD_path = tk.Button(button_menu, text = 'Find FreeCAD Dir',font=("Helvetica", int(12*p_w)), command = Pressed_Find_FreeCAD_Dir,bg="#e0e0d1")
 button_FreeCAD_path.place(relx=0.1,rely=pos_y,relwidth=0.8, relheight=0.1)
@@ -418,6 +433,7 @@ button_exit.place(relx=0.1,rely=(pos_y+pos_y_os*7),relwidth=0.8, relheight=0.1)
 #####################################################################################
 ###################################Volume Lists######################################
 #####################################################################################
+
 frame_names = tk.Frame(lists_menu)
 frame_names.place(relx=0.01, rely=0.02,relwidth=0.98,relheight=0.96)
 scrollbar_names = tk.Scrollbar(frame_names)
@@ -432,6 +448,7 @@ mylist_names.bind('<<ListboxSelect>>', vol_info)
 #####################################################################################
 ###############################Property Buttons######################################
 #####################################################################################
+
 #Label
 empty_label = tk.Message( vol_properties_menu, text="",width=int(500),font=("Helvetica", 15),anchor='w',fg="black")
 empty_label.place(relx=0.05,rely=0.05,relwidth=0.9,relheight=0.5)
