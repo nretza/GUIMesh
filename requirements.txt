@@ -1,0 +1,3 @@
+tk
+freecad>=0.19
+python>=3.8
