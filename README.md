@@ -1,7 +1,7 @@
 # updates by me (github.com/nretza)
 Since a CAD -> gdml converter was needed for GEANT4 simulations of P-ONE, multiple options were evaluated. Reviving this repo and making small adjustments seems to be the most feasible option.
 
-# setting it up
+## setting it up
 1. clone the repo
 2. make sure the stuff in requirements.txt is installed and running
 3. you are good to go
