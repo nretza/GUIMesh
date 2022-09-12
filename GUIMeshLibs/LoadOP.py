@@ -18,6 +18,7 @@
 #                                                                                                       #
 #########################################################################################################
 #Libraries
+import os
 from GUIMeshLibs import Materials
 from GUIMeshLibs import Volumes
 
@@ -58,10 +59,10 @@ def Load_STEP_File(doc_status,material):
                     print(f"Volume loaded:      {obj.Label}")
                 else:
                     print(f"Volume rejected:    {obj.Label}")
-            return list_of_objects
+            return list_of_objects, os.path.basename(path_to_file)
         except:
             print("Error reading file. Format might be incorrect.")
-            return 0
+            return 0, 0
     else:
         print("Error with file extension")
-        return 0
+        return 0, 0

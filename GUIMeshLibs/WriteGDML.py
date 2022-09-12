@@ -75,7 +75,6 @@ def CreateMother(dir_path,object_list,world):
      
 ####################Function to write individual volume GDML file#####################     
 def CreateGDML(obj,vol_numb,path_to_mesh):
-    import Mesh
     precision=obj.VolumeMMD   
     triangles = obj.VolumeCAD.Shape.tessellate(precision) #the number represents the precision of the tessellation #returns matrix with triangles vertices
     count=0
@@ -126,12 +125,15 @@ def CreateGDML(obj,vol_numb,path_to_mesh):
     F.close()
 
 #Main function called to write all GDML files
-def Write_Files(obj_list, world_list):
+def Write_Files(obj_list, world_list, step_file_name):
     write_dir=tkFileDialog.askdirectory()
+    if step_file_name == "":
+        step_file_name = "default.step"
+    write_dir=os.path.join(write_dir, step_file_name.split(".")[0])
     print(write_dir)
     # Create Volumes Directory (does not remove folders)
     try:
-        os.mkdir(str(write_dir)+"/Volumes")
+        os.makedirs(str(write_dir)+"/Volumes")
         print("Directory " , str(write_dir)+"/Volumes" ,  " Created ") 
     except:
         print("Directory " , str(write_dir)+"/Volumes" ,  " already exists")

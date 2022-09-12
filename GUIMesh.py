@@ -21,10 +21,9 @@
 #################################################################
 ##########################Libraries##############################
 #################################################################
+
+
 import sys
-import os.path
-import time
-import math
 
 try: 
     import tkinter as tk
@@ -82,13 +81,14 @@ def Pressed_Read_STEP():
     global list_of_objects
     global Element_List
     global file_status
+    global step_file_name
     global FreeCAD_status
     print("Pressed Read STEP")
     #Requires FreeCAD to be loaded
     if (FreeCAD_status=="FreeCAD loaded"):
         STEP_file_status="Opening file..."
         label_STEP_path.configure(text=STEP_file_status)
-        temp_list_of_objects=LoadOP.Load_STEP_File(file_status,Element_List[13])#Load STEP with FreeCAD library - See LoadOP library
+        temp_list_of_objects, step_file_name =LoadOP.Load_STEP_File(file_status,Element_List[13])#Load STEP with FreeCAD library - See LoadOP library
         #Check if loading was done properly
         if (temp_list_of_objects==0):
                 tkMessageBox.showinfo("Error", "File format or extension is incorrect.")
@@ -197,9 +197,10 @@ def Pressed_Material_Manager():
 def Pressed_Write_GDML():
     global list_of_objects
     global world_dimensions
+    global step_file_name
     print("Pressed_Write_GDML STEP Mesh")
     if len(list_of_objects)>0:
-        WriteGDML.Write_Files(list_of_objects, world_dimensions)#See WriteGDML library
+        WriteGDML.Write_Files(list_of_objects, world_dimensions, step_file_name)#See WriteGDML library
     else:
         tkMessageBox.showinfo("Error", "There are no volumes to mesh.")
 
@@ -343,6 +344,7 @@ def Pressed_Exit_Program():
 FreeCAD_status="FreeCAD not loaded"
 STEP_file_status="No file has been loaded"
 file_status=0
+step_file_name = ""
 world_dimensions=[1.0,1.0,1.0] #in meters
 list_of_objects=[]
 list_of_names=[]
