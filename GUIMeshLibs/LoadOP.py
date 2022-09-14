@@ -54,12 +54,12 @@ def Load_STEP_File(doc_status,material):
             print("File read successfuly")
             list_of_objects=[]
             for obj in FreeCAD.ActiveDocument.Objects:
-                if hasattr(obj,"Shape"): # check to catch stuff like coordinate systems, planes etc.
+                if obj.Module == "Part": # check to only let parts pass
                     list_of_objects.append(Volumes.Volume(obj,material,0.1,1))
                     print(f"Volume loaded:      {obj.Label}")
                 else:
                     print(f"Volume rejected:    {obj.Label}")
-            return list_of_objects, os.path.basename(path_to_file)
+            return list_of_objects, os.path.basename(path_to_file).replace(" ", "_")
         except:
             print("Error reading file. Format might be incorrect.")
             return 0, 0
