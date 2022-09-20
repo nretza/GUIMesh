@@ -9,8 +9,9 @@ Since a CAD -> gdml converter was needed for GEANT4 simulations of P-ONE, multip
 ## usage
 P-ONE geometry files exist in a Solidworks environment. This converter takes in *.step files, so make use of Solidworks export function to export the geometry to *.step. Check out [The Solidworks documentation](https://help.solidworks.com/2022/English/SolidWorks/sldworks/HIDD_EXPORT_OPTIONS_STEP.htm) for more information.
 
-Run GUIMesh.py, import the *.step file and set the necessary material information. [This](https://github.com/nretza/GUIMesh/blob/master/Documents/GUIMesh%20User%20Manual.pdf) is a well done visual guide through the program by its original author Marco Gui Alves Pinto for reference.
+Run GUIMesh.py, import the *.step file and set the necessary material information. [This](Documents/GUIMesh%20User%20Manual.pdf) is a well done visual guide through the program by its original author Marco Gui Alves Pinto for reference.
 
+**IMPORTANT:** In order to allow an errorless conversion, make sure to resolve all subassemblys in Solidworks. The The exported Step file should only contain `Part` objects
 ## changes made 
 
 * updated for python 3
@@ -19,7 +20,7 @@ Run GUIMesh.py, import the *.step file and set the necessary material informatio
 * converter adjustments to properly handle *.step files coming from Solidworks
 * fixed bugs in gdml output that prohibited direct import in GEANT4
 
-# GUIMesh
+# GUIMesh (original README)
 Copyright (c) 2018  Marco Gui Alves Pinto  mail:mgpinto11@gmail.com
 
 This program is distributed under the terms of the GNU General Public License 3
