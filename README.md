@@ -11,7 +11,7 @@ P-ONE geometry files exist in a Solidworks environment. This converter takes in 
 
 Run GUIMesh.py, import the *.step file and set the necessary material information. [This](Documents/GUIMesh%20User%20Manual.pdf) is a well done visual guide through the program by its original author Marco Gui Alves Pinto for reference.
 
-**IMPORTANT:** In order to allow an errorless conversion, make sure to resolve all subassemblys in Solidworks. The The exported Step file should only contain `Part` objects
+**IMPORTANT:** In order to allow an errorless conversion, make sure to resolve all subassemblys in Solidworks. The exported Step file should only contain `Part` objects
 ## changes made 
 
 * updated for python 3
