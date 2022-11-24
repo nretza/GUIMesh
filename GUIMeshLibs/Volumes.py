@@ -33,13 +33,15 @@ class Volume():
         self.VolumeMaterial=mymaterial
         self.VolumeMMD=myMMD
         self.VolumeGDMLoption=myGDMLoption
+        self.Color = (1.0,1.0,1.0,1.0)  # RGBA
+
 
 #Save Volume Properties Function - Writes a CSV file with information of all loaded volumes to edit outsite of GUIMesh
 def SaveVolumeProperties(list_of_objects):
     filename=tkSimpleDialog.askstring("","Please type a filename: ")
     f=open(filename+".csv",'w')
     for i in list_of_objects:
-            f.write(str(i.VolumeCAD.Label)+";"+ str(i.VolumeMaterial.Name)+";"+ str(i.VolumeMMD)+";"+ str(i.VolumeGDMLoption)+"\n")
+            f.write(str(i.VolumeCAD.Label)+";"+ str(i.VolumeMaterial.Name)+";"+ str(i.VolumeMMD)+";"+ str(i.VolumeGDMLoption)+";"+str(i.Color[0])+";"+str(i.Color[1])+";"+str(i.Color[2])+";"+str(i.Color[3])+"\n")
             print(i.VolumeCAD.Label, i.VolumeMaterial.Name, i.VolumeMMD, i.VolumeGDMLoption)
     f.close()
 
@@ -65,6 +67,7 @@ def LoadVolumeProperties(list_of_objects,Element_List,Material_List):
                 new_material_name=properties_list[1]
                 new_MMD=properties_list[2]
                 new_GDMLoption=properties_list[3][0]
+                new_color = (properties_list[4], properties_list[5], properties_list[6], properties_list[7])
                 print("Evaluating line "+str(counter+1)+":")
                 #Check if Name in line corresponds to Volume label
                 if Volume_Label==list_of_objects[counter].VolumeCAD.Label:
@@ -98,6 +101,11 @@ def LoadVolumeProperties(list_of_objects,Element_List,Material_List):
                                 new_GDMLoption=1
                             list_of_objects[counter].VolumeGDMLoption=int(new_GDMLoption)
                             print("GDMLoption value is correct:", new_GDMLoption)
+                            try:
+                                list_of_objects[counter].Color=new_color
+                                print("Color is correct: ", new_color)
+                            except:
+                                print("Color is not correct - moving on to the next line.")
                         except:
                             print("GDML option must be an integer - moving on to the next line.")
                     except:

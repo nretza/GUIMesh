@@ -28,13 +28,13 @@ import sys
 try: 
     import tkinter as tk
     from tkinter import filedialog as tkFileDialog
-    from tkinter import simpledialog as tkSimpleDialog
     from tkinter import messagebox as tkMessageBox
+    from tkinter import simpledialog as tkSimpleDialog
 except:
-    print("Could not import Tkinter. It might not be installed or the installation  might have a different name.")
+    print("Could not import Tkinter. It might not be installed or the installation might have a different name.")
 
 try:
-    from GUIMeshLibs import Materials, MaterialManager, Volumes, LoadOP, WriteGDML
+    from GUIMeshLibs import LoadOP, MaterialManager, Materials, Volumes, WriteGDML
 except:
     print("Could not load GUIMesh libraries. Please check if the folder GUIMeshLibs exists and if the files are there.")
 
@@ -277,6 +277,60 @@ def Pressed_Change_GDML_Option():
         for i in list_of_objects:
             i.VolumeGDMLoption=newGDMLoption
 
+
+def Save_Color_Button(r,g,b,a,top):
+    global list_of_objects
+    try:
+        r,g,b,a = float(r.get()), float(g.get()), float(b.get()), float(a.get())
+        assert r <= 1
+        assert r >= 0
+        assert g <= 1
+        assert g >= 0
+        assert b <= 1
+        assert b >= 0
+        assert a <= 1
+        assert a >= 0
+    except:
+        tkMessageBox.showinfo("Error", "All variables must be float values between 0 and 1.")
+        return 0
+    if set_all_var.get()==0: #Selected volume
+        global selected_volume_index
+        list_of_objects[selected_volume_index].Color=(float(r), float(g), float(b), float(a))
+    else: #All volumes
+        for i in list_of_objects:
+            i.Color=(float(r), float(g), float(b), float(a))
+    top.destroy()
+    print(r,g,b,a)
+
+
+#Change Color Option
+def Pressed_Change_Color_Option():
+    global list_of_objects
+    print("Pressed Change Color Option")
+    #Create small interface to assign color values
+    top = tk.Tk()
+    top.attributes('-topmost', 'true')
+    E1_label = tk.Message( top, text="R",width=int(500),font=("Helvetica", 15),anchor='w',fg="black")
+    E1_label.grid(row=0,column=0)
+    E1 = tk.Entry(top, bd =5)
+    E1.grid(row=1, column=0)
+    E2_label = tk.Message( top, text="G",width=int(500),font=("Helvetica", 15),anchor='w',fg="black")
+    E2_label.grid(row=0,column=1)
+    E2 = tk.Entry(top, bd =5)
+    E2.grid(row=1, column=1)   
+    E3_label = tk.Message( top, text="B",width=int(500),font=("Helvetica", 15),anchor='w',fg="black")
+    E3_label.grid(row=0,column=2)
+    E3 = tk.Entry(top, bd =5)
+    E3.grid(row=1, column=2)
+    E4_label = tk.Message( top, text="A",width=int(500),font=("Helvetica", 15),anchor='w',fg="black")
+    E4_label.grid(row=0,column=3)
+    E4 = tk.Entry(top, bd =5)
+    E4.grid(row=1, column=3)
+    save_world_button=tk.Button(top, text="Save",bd=5,relief="raised",width=8,height=1,bg="red",command=lambda : Save_Color_Button(E1,E2,E3,E4,top))
+    save_world_button.grid(row=0,column=4)
+    top.mainloop()
+
+
 #Select volume
 def vol_info(evt):
     global vol_properties_menu
@@ -306,12 +360,17 @@ def vol_info(evt):
     Vol_MMD = tk.StringVar(vol_properties_menu)
     Vol_MMD.set("") # default value
     Vol_MMD_label = tk.Message( vol_properties_menu, textvariable=Vol_MMD,width=int(500),font=("Helvetica", 15),anchor='w',fg="black")
-    Vol_MMD_label.place(relx=0.05,rely=0.45,relwidth=0.45,relheight=0.1)
+    Vol_MMD_label.place(relx=0.05,rely=0.45,relwidth=0.3,relheight=0.1)
     #Volume GDML option
     Vol_GDML_option = tk.StringVar(vol_properties_menu)
     Vol_GDML_option.set("") # default value
     Vol_GDML_option_label = tk.Message( vol_properties_menu, textvariable=Vol_GDML_option,width=int(500),font=("Helvetica", 15),anchor='w',fg="black")
-    Vol_GDML_option_label.place(relx=0.5,rely=0.45,relwidth=0.45,relheight=0.1)
+    Vol_GDML_option_label.place(relx=0.27,rely=0.45,relwidth=0.3,relheight=0.1)
+    #Volume Color option
+    Vol_Color_option = tk.StringVar(vol_properties_menu)
+    Vol_Color_option.set("") # default value
+    Vol_Color_option_label = tk.Message( vol_properties_menu, textvariable=Vol_Color_option,width=int(500),font=("Helvetica", 15),anchor='w',fg="black")
+    Vol_Color_option_label.place(relx=0.55,rely=0.45,relwidth=0.4,relheight=0.1)
 
     #Set Volume  Properties to display
     w = evt.widget
@@ -321,6 +380,7 @@ def vol_info(evt):
     Vol_Size.set("Volume: "+str(list_of_objects[index].VolumeCAD.Shape.Volume/1000)+" cm3")
     Vol_Mass.set("Mass: "+str(list_of_objects[index].VolumeMaterial.Density*(list_of_objects[index].VolumeCAD.Shape.Volume/1000.))+" g")
     Vol_MMD.set("MMD: "+str(list_of_objects[index].VolumeMMD)+" mm")
+    Vol_Color_option.set(f"Color: {list_of_objects[index].Color}")
     if list_of_objects[index].VolumeGDMLoption!=0:
         Vol_GDML_option.set("Write GDML: Yes")
     else:
@@ -461,13 +521,16 @@ set_all_check_button = tk.Checkbutton(vol_properties_menu, text="Set All", font=
 set_all_check_button.place(relx=0.05,rely=0.9,relwidth=0.15,relheight=0.05)
 #Change Material
 button_Change_Material = tk.Button(vol_properties_menu, text = 'Change Material',font=("Helvetica", int(12*p_w)), command = Pressed_Change_Material,bg="#e0e0d1")
-button_Change_Material.place(relx=0.05,rely=0.6,relwidth=0.9, relheight=0.1)
+button_Change_Material.place(relx=0.05,rely=0.56,relwidth=0.9, relheight=0.08)
 #Change MMD
 button_Change_MMD = tk.Button(vol_properties_menu, text = 'Change MMD',font=("Helvetica", int(12*p_w)), command = Pressed_Change_MMD,bg="#e0e0d1")
-button_Change_MMD.place(relx=0.05,rely=0.7,relwidth=0.9, relheight=0.1)
+button_Change_MMD.place(relx=0.05,rely=0.64,relwidth=0.9, relheight=0.08)
 #Change GDML Option
 button_Change_GDML_Option = tk.Button(vol_properties_menu, text = 'Change GDML Option',font=("Helvetica", int(12*p_w)), command = Pressed_Change_GDML_Option,bg="#e0e0d1")
-button_Change_GDML_Option.place(relx=0.05,rely=0.8,relwidth=0.9, relheight=0.1)
+button_Change_GDML_Option.place(relx=0.05,rely=0.72,relwidth=0.9, relheight=0.08)
+#Change Color Option
+button_Change_GDML_Option = tk.Button(vol_properties_menu, text = 'Change Color Option',font=("Helvetica", int(12*p_w)), command = Pressed_Change_Color_Option,bg="#e0e0d1")
+button_Change_GDML_Option.place(relx=0.05,rely=0.8,relwidth=0.9, relheight=0.08)
 
 #####################################################################################
 ################################End of main loop#####################################

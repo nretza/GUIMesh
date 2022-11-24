@@ -20,6 +20,8 @@
 
 #Libraries
 import os
+import shutil
+
 from GUIMeshLibs import Materials
 from GUIMeshLibs import Volumes
 
@@ -33,7 +35,7 @@ def CreateMother(dir_path,object_list,world):
     #write headers and globals
     F=open(str(dir_path)+"/mother.gdml","w")
     F.write('<?xml version="1.0" encoding="UTF-8" ?>\n')
-    F.write('<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd" >\n')
+    F.write(f'<gdml_simple_extension xmlns:gdml_simple_extension="http://www.example.org", xmlns:xs="http://www.w3.org/2001/XMLSchema-instance", xs:noNamespaceSchemaLocation="{str(path_to_mesh)+"/gdml_extention/gdml_extention.xsd"}">')
     F.write('<define>\n')
     F.write('<position name="center" x="0" y="0" z="0"/>\n')
     F.write('<rotation name="identity" x="0" y="0" z="0"/>\n')
@@ -83,13 +85,17 @@ def CreateGDML(obj,vol_numb,path_to_mesh):
     F=open(str(path_to_mesh)+"/Volumes/"+gdml_name+".gdml","w")
     #write header
     F.write('<?xml version="1.0" encoding="UTF-8" standalone="no" ?>\n')
-    F.write('<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">\n')
+    F.write(f'<gdml_simple_extension xmlns:gdml_simple_extension="http://www.example.org", xmlns:xs="http://www.w3.org/2001/XMLSchema-instance", xs:noNamespaceSchemaLocation="{str(path_to_mesh)+"/gdml_extention/gdml_extention.xsd"}">')
     #write position
     F.write(' <define>\n')
     for tri in triangles[0]:
         F.write(' <position name="'+gdml_name+'_v'+str(count)+'" unit="mm" x="'+str(tri[0])+'" y="'+str(tri[1])+'" z="'+str(tri[2])+'"/>\n')
         count=count+1	
     F.write(" </define>\n\n")
+    #write color
+    F.write('<extension>')
+    F.write(f'<color name="{gdml_name + "_color"}"  R="{obj.Color[0]}"  G="{obj.Color[1]}"  B="{obj.Color[2]}"  A="{obj.Color[3]}" />')	
+    F.write('</extension>')
     #write material
     if obj.VolumeMaterial.Nelements!=0:    
         mat_state="solid"   
@@ -116,6 +122,7 @@ def CreateGDML(obj,vol_numb,path_to_mesh):
     F.write(' <volume name="'+gdml_name+'">\n')
     F.write(' <materialref ref="'+str(obj.VolumeMaterial.Name)+'"/>'+"\n")
     F.write(' <solidref ref="'+gdml_name+'_solid"/>'+"\n")
+    F.write(' <colorref ref="'+gdml_name+'_color"/>'+"\n")
     F.write(' </volume>\n')
     F.write(' </structure>\n')
     F.write(' <setup name="Default" version="1.0">'+"\n")
@@ -137,6 +144,16 @@ def Write_Files(obj_list, world_list, step_file_name):
         print("Directory " , str(write_dir)+"/Volumes" ,  " Created ") 
     except:
         print("Directory " , str(write_dir)+"/Volumes" ,  " already exists")
+    try:
+        os.makedirs(str(write_dir)+"/gdml_extention")
+        print("Directory " , str(write_dir)+"/gdml_extention" ,  " Created ") 
+    except:
+        print("Directory " , str(write_dir)+"/gdml_extention" ,  " already exists")
+    try:
+        shutil.copyfile("./gdml_extention/gdml_extention.xsd", str(write_dir)+"/gdml_extention/gdml_extention.xsd")
+        print(f"gdml_extention.xsd copied to {str(write_dir)}/gdml_extention/")
+    except:
+        print(f"Error: gdml_extention.xsd could not be copied")
     #Create mother gdml
     CreateMother(write_dir,obj_list,world_list,)
     #Create volume gdmls
