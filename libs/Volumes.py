@@ -19,8 +19,27 @@
 #########################################################################################################
 
 class Volume():
+
     def __init__(self,myvolume,myMMD,myGDMLoption):
+
         self.VolumeCAD=myvolume
-        self.VolumeCAD.Label = str(self.VolumeCAD.Label).replace(" ", "_").replace(".", "_")
         self.VolumeMMD=myMMD
         self.VolumeGDMLoption=myGDMLoption
+        self.setLabel()
+
+    def setLabel(self):
+
+        #get label
+        label = str(self.VolumeCAD.Label)
+
+        #can not contain special characters
+        invalid_chars = [ ':', '@', '$', '%', '&', '/', '+', ',', ';', ' ', '.']
+
+        for char in invalid_chars:
+            label = label.replace(char, "_")
+
+        # has to start with [a-zA-Z]
+        if not label[0].isalpha():
+            label = "a_" + label
+        
+        self.VolumeCAD.Label = label
