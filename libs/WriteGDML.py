@@ -75,7 +75,7 @@ def CreateMother(dir_path,object_list,world):
 
      
 ####################Function to write individual volume GDML file#####################     
-def CreateGDML(obj,vol_numb,path_to_mesh):
+def CreateGDML(obj,vol_numb,path_to_mesh, offset):
 
     precision=obj.VolumeMMD   
     triangles = obj.VolumeCAD.Shape.tessellate(precision) #the number represents the precision of the tessellation #returns matrix with triangles vertices
@@ -92,7 +92,7 @@ def CreateGDML(obj,vol_numb,path_to_mesh):
     #write position
     F.write(' <define>\n')
     for tri in triangles[0]:
-        F.write(' <position name="'+gdml_name+'_v'+str(count)+'" unit="mm" x="'+str(tri[0])+'" y="'+str(tri[1])+'" z="'+str(tri[2])+'"/>\n')
+        F.write(' <position name="'+gdml_name+'_v'+str(count)+'" unit="mm" x="'+str(tri[0] + offset[0])+'" y="'+str(tri[1] + offset[1])+'" z="'+str(tri[2] + offset[2])+'"/>\n')
         count+=1	
     F.write(" </define>\n\n")
 
@@ -131,7 +131,7 @@ def CreateGDML(obj,vol_numb,path_to_mesh):
     F.close()
 
 #Main function called to write all GDML files
-def Write_Files(obj_list, world_list, step_file_name):
+def Write_Files(obj_list, world_list, offset, step_file_name):
     write_dir=tkFileDialog.askdirectory()
     if step_file_name == "":
         step_file_name = "default.step"
@@ -148,6 +148,6 @@ def Write_Files(obj_list, world_list, step_file_name):
     #Create volume gdmls
     for counter, obj in enumerate(obj_list):
         if obj.VolumeGDMLoption==1:
-            CreateGDML(obj,counter,write_dir)
+            CreateGDML(obj,counter,write_dir, offset)
     tkMessageBox.showinfo("Message", 'GDML Files ready.')        
 #Note: A number is added to each volumes label to avoid that two different volumes have the same name. This can be seen in the mother and in the volumes GDMLs

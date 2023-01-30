@@ -159,6 +159,55 @@ def Pressed_World_Size():
 
 
 #################################################################
+###########################Pressed Offset #######################
+#################################################################
+
+####### Save new offset
+
+def Save_offset_Button(x,y,z,top):
+    global offset
+    print(offset[0], offset[1], offset[2])
+    try:
+        float(x.get())
+        float(y.get())
+        float(z.get())
+    except:
+        tkMessageBox.showinfo("Error", "All variables must be float values larger than 0.")
+        return 0
+    offset[0]=float(x.get())
+    offset[1]=float(y.get())
+    offset[2]=float(z.get())
+    top.destroy()
+    print(offset[0], offset[1], offset[2])
+
+########interface to select new offset
+
+def Pressed_offset():
+    global offset
+    print("Pressed_offset")
+    #Create small interface to assign offset values
+    top = tk.Tk()
+    top.attributes('-topmost', 'true')
+    E1_label = tk.Message( top, text="X",width=int(500),font=("Helvetica", 15),anchor='w',fg="black")
+    E1_label.grid(row=0,column=0)
+    E1 = tk.Entry(top, bd =5)
+    E1.grid(row=1, column=0)
+    E2_label = tk.Message( top, text="Y",width=int(500),font=("Helvetica", 15),anchor='w',fg="black")
+    E2_label.grid(row=0,column=1)
+    E2 = tk.Entry(top, bd =5)
+    E2.grid(row=1, column=1)   
+    E3_label = tk.Message( top, text="Z",width=int(500),font=("Helvetica", 15),anchor='w',fg="black")
+    E3_label.grid(row=0,column=2)
+    E3 = tk.Entry(top, bd =5)
+    E3.grid(row=1, column=2)
+    units_label = tk.Message( top, text="mm",width=int(500),font=("Helvetica", 15),anchor='w',fg="black")
+    units_label.grid(row=1,column=3)
+    save_offset_button=tk.Button(top, text="Save",bd=5,relief="raised",width=8,height=1,bg="red",command=lambda : Save_offset_Button(E1,E2,E3,top))
+    save_offset_button.grid(row=0,column=3)
+    top.mainloop()
+
+
+#################################################################
 ############################Write GDML###########################
 #################################################################
 
@@ -168,7 +217,7 @@ def Pressed_Write_GDML():
     global step_file_name
     print("Pressed_Write_GDML STEP Mesh")
     if list_of_objects:
-        WriteGDML.Write_Files(list_of_objects, world_dimensions, step_file_name) #See WriteGDML library
+        WriteGDML.Write_Files(list_of_objects, world_dimensions, offset ,step_file_name) #See WriteGDML library
     else:
         tkMessageBox.showinfo("Error", "There are no volumes to mesh.")
 
@@ -270,6 +319,7 @@ STEP_file_status="No file has been loaded"
 file_status=0
 step_file_name = ""
 world_dimensions=[1.0,1.0,1.0] #in meters
+offset=[0,0,0] # in mm  
 list_of_objects=[]
 list_of_names=[]
 
@@ -338,6 +388,9 @@ button_Read_STEP.place(relx=0.1,rely=(pos_y+pos_y_os),relwidth=0.8, relheight=0.
 #World Size button
 button_World_Size = tk.Button(button_menu, text = 'World Size', font=("Helvetica", int(12*p_w)), command = Pressed_World_Size,bg="#e0e0d1")
 button_World_Size.place(relx=0.1,rely=(pos_y+pos_y_os*2),relwidth=0.8, relheight=0.1)
+#offset button
+button_offset = tk.Button(button_menu, text = 'Pos. offset', font=("Helvetica", int(12*p_w)), command = Pressed_offset,bg="#e0e0d1")
+button_offset.place(relx=0.1,rely=(pos_y+pos_y_os*2),relwidth=0.8, relheight=0.1)
 #Write GDML button
 button_Write_GDML = tk.Button(button_menu, text = 'Write GDML',font=("Helvetica", int(12*p_w)), command = Pressed_Write_GDML,bg="#e0e0d1")
 button_Write_GDML.place(relx=0.1,rely=(pos_y+pos_y_os*6),relwidth=0.8, relheight=0.1)
