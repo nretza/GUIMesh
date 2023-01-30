@@ -27,14 +27,13 @@ import sys
 
 try: 
     import tkinter as tk
-    from tkinter import filedialog as tkFileDialog
     from tkinter import simpledialog as tkSimpleDialog
     from tkinter import messagebox as tkMessageBox
 except:
     print("Could not import Tkinter. It might not be installed or the installation  might have a different name.")
 
 try:
-    from GUIMeshLibs import Materials, MaterialManager, Volumes, LoadOP, WriteGDML
+    from libs import LoadOP, WriteGDML
 except:
     print("Could not load GUIMesh libraries. Please check if the folder GUIMeshLibs exists and if the files are there.")
 
@@ -79,7 +78,6 @@ def Pressed_Read_STEP():
     global STEP_file_status
     global mylist_names
     global list_of_objects
-    global Element_List
     global file_status
     global step_file_name
     global FreeCAD_status
@@ -88,9 +86,9 @@ def Pressed_Read_STEP():
     if (FreeCAD_status=="FreeCAD loaded"):
         STEP_file_status="Opening file..."
         label_STEP_path.configure(text=STEP_file_status)
-        temp_list_of_objects, step_file_name =LoadOP.Load_STEP_File(file_status,Element_List[13])#Load STEP with FreeCAD library - See LoadOP library
+        temp_list_of_objects, step_file_name =LoadOP.Load_STEP_File(file_status) #Load STEP with FreeCAD library - See LoadOP library
         #Check if loading was done properly
-        if (temp_list_of_objects==0):
+        if not temp_list_of_objects:
                 tkMessageBox.showinfo("Error", "File format or extension is incorrect.")
                 print("Error: File format or extension is incorrect.")
                 STEP_file_status="Error opening file"
@@ -159,37 +157,7 @@ def Pressed_World_Size():
     save_world_button.grid(row=0,column=3)
     top.mainloop()
 
-#################################################################
-#############Save object properties into a csv file.#############
-#################################################################
 
-def Pressed_Save_Properties():
-    global list_of_objects
-    print("Pressed Save Properties")
-    Volumes.SaveVolumeProperties(list_of_objects)#Save csv file with volume properties - See Volumes Library
-    
-#################################################################
-#############Load object properties into a csv file##############
-#################################################################
-
-#Even if there are errors (material for instance) all correct information is loaded
-def Pressed_Load_Properties():
-    global list_of_objects
-    global Element_List
-    global Material_List
-    print("Pressed Load Properties")
-    Volumes.LoadVolumeProperties(list_of_objects,Element_List,Material_List)#Load csv file with volume properties - See Volumes Library
-
-#################################################################
-################Material Manager - New window####################
-#################################################################
-
-def Pressed_Material_Manager():
-    global Element_List
-    global Material_List
-    print("Pressed Material Manager")
-    MaterialManager.Draw_MatManager(Element_List,Material_List) #See MaterialManager library - Changes Material List
-    
 #################################################################
 ############################Write GDML###########################
 #################################################################
@@ -199,47 +167,15 @@ def Pressed_Write_GDML():
     global world_dimensions
     global step_file_name
     print("Pressed_Write_GDML STEP Mesh")
-    if len(list_of_objects)>0:
-        WriteGDML.Write_Files(list_of_objects, world_dimensions, step_file_name)#See WriteGDML library
+    if list_of_objects:
+        WriteGDML.Write_Files(list_of_objects, world_dimensions, step_file_name) #See WriteGDML library
     else:
         tkMessageBox.showinfo("Error", "There are no volumes to mesh.")
 
 #################################################################
 #################Selected Volume Operations######################
 #################################################################
-#Change Material
 
-def Pressed_Change_Material():
-    global selected_volume_index
-    global Element_List
-    global Material_List
-    print("Pressed_Change_Volume_Material")
-
-    newMaterial=tkSimpleDialog.askstring('Material ', 'Select new Material')
-    check_mat=0 #Check if Material exists
-    for ele in Element_List:
-        if newMaterial==ele.Name:
-            check_mat=1
-            if set_all_var.get()==0:#Selected volume
-                list_of_objects[selected_volume_index].VolumeMaterial=ele
-            else:#All volumes
-                for i in list_of_objects:
-                    i.VolumeMaterial=ele
-    if check_mat==0:
-        for mat in Material_List:
-            if newMaterial==mat.Name:
-                check_mat=1
-                if set_all_var.get()==0: #Selected volume
-                    list_of_objects[selected_volume_index].VolumeMaterial=mat
-                else: #All volumes
-                    for i in list_of_objects:
-                        i.VolumeMaterial=mat
-    if check_mat==0:
-        tkMessageBox.showinfo("Error", "Material not found in database.")
-        print("Material not found in database")
-    else:
-        print("New material:",newMaterial)
-        
 #Change MMD
 def Pressed_Change_MMD():
     global list_of_objects
@@ -270,7 +206,7 @@ def Pressed_Change_GDML_Option():
         newGDMLoption=0
     else:
         newGDMLoption=1
-    if set_all_var.get()==0: #Selected volume
+    if not set_all_var.get(): #Selected volume
         global selected_volume_index
         list_of_objects[selected_volume_index].VolumeGDMLoption=newGDMLoption
     else: #All volumes
@@ -287,21 +223,11 @@ def vol_info(evt):
     Vol_Name.set("") # default value
     Vol_Name_label = tk.Message( vol_properties_menu, textvariable=Vol_Name, width=int(500),font=("Helvetica", 15),anchor='w',fg="black")
     Vol_Name_label.place(relx=0.05,rely=0.05,relwidth=0.9,relheight=0.1)
-    #Volume Material    
-    Vol_Material = tk.StringVar(vol_properties_menu)
-    Vol_Material.set("") # default value
-    Vol_Material_label = tk.Message( vol_properties_menu, textvariable=Vol_Material,width=int(500),font=("Helvetica", 15),anchor='w',fg="black")
-    Vol_Material_label.place(relx=0.05,rely=0.15,relwidth=0.9,relheight=0.1)
     #Volume Size
     Vol_Size = tk.StringVar(vol_properties_menu)
     Vol_Size.set("") # default value
     Vol_Size_label = tk.Message( vol_properties_menu, textvariable=Vol_Size,width=int(500),font=("Helvetica", 15),anchor='w',fg="black")
     Vol_Size_label.place(relx=0.05,rely=0.25,relwidth=0.9,relheight=0.1)
-    #Volume Mass
-    Vol_Mass = tk.StringVar(vol_properties_menu)
-    Vol_Mass.set("") # default value
-    Vol_Mass_label = tk.Message( vol_properties_menu, textvariable=Vol_Mass,width=int(500),font=("Helvetica", 15),anchor='w',fg="black")
-    Vol_Mass_label.place(relx=0.05,rely=0.35,relwidth=0.9,relheight=0.1)
     #Volume MMD
     Vol_MMD = tk.StringVar(vol_properties_menu)
     Vol_MMD.set("") # default value
@@ -315,11 +241,9 @@ def vol_info(evt):
 
     #Set Volume  Properties to display
     w = evt.widget
-    selected_volume_index=index = int(w.curselection()[0]) #index
+    selected_volume_index= index = int(w.curselection()[0]) #index
     Vol_Name.set("Name: "+list_of_objects[index].VolumeCAD.Label)
-    Vol_Material.set("Material: "+list_of_objects[index].VolumeMaterial.Name)
     Vol_Size.set("Volume: "+str(list_of_objects[index].VolumeCAD.Shape.Volume/1000)+" cm3")
-    Vol_Mass.set("Mass: "+str(list_of_objects[index].VolumeMaterial.Density*(list_of_objects[index].VolumeCAD.Shape.Volume/1000.))+" g")
     Vol_MMD.set("MMD: "+str(list_of_objects[index].VolumeMMD)+" mm")
     if list_of_objects[index].VolumeGDMLoption!=0:
         Vol_GDML_option.set("Write GDML: Yes")
@@ -348,8 +272,6 @@ step_file_name = ""
 world_dimensions=[1.0,1.0,1.0] #in meters
 list_of_objects=[]
 list_of_names=[]
-Element_List=Materials.Load_Elements()
-Material_List=[]
 
 #####################################################################################
 #######################################Canvas########################################
@@ -408,23 +330,14 @@ description_label.place(relx= 0.25,rely = 0.1,relwidth=0.55, relheight=0.05)
 #####################################################################################
 
 #FreeCAD button
-button_FreeCAD_path = tk.Button(button_menu, text = 'Find FreeCAD Dir',font=("Helvetica", int(12*p_w)), command = Pressed_Find_FreeCAD_Dir,bg="#e0e0d1")
+button_FreeCAD_path = tk.Button(button_menu, text = 'Find FreeCAD',font=("Helvetica", int(12*p_w)), command = Pressed_Find_FreeCAD_Dir,bg="#e0e0d1")
 button_FreeCAD_path.place(relx=0.1,rely=pos_y,relwidth=0.8, relheight=0.1)
 #Read Step button
 button_Read_STEP = tk.Button(button_menu, text = 'Read STEP', font=("Helvetica", int(12*p_w)), command = Pressed_Read_STEP,bg="#e0e0d1")
 button_Read_STEP.place(relx=0.1,rely=(pos_y+pos_y_os),relwidth=0.8, relheight=0.1)
-#Update Lists button
+#World Size button
 button_World_Size = tk.Button(button_menu, text = 'World Size', font=("Helvetica", int(12*p_w)), command = Pressed_World_Size,bg="#e0e0d1")
 button_World_Size.place(relx=0.1,rely=(pos_y+pos_y_os*2),relwidth=0.8, relheight=0.1)
-#Save Lists button
-button_Save_Properties = tk.Button(button_menu, text = 'Save Properties',font=("Helvetica", int(12*p_w)), command = Pressed_Save_Properties,bg="#e0e0d1")
-button_Save_Properties.place(relx=0.1,rely=(pos_y+pos_y_os*3),relwidth=0.8, relheight=0.1)
-#Load Materials button
-button_Load_Properties = tk.Button(button_menu, text = 'Load Properties',font=("Helvetica", int(12*p_w)), command = Pressed_Load_Properties,bg="#e0e0d1")
-button_Load_Properties.place(relx=0.1,rely=(pos_y+pos_y_os*4),relwidth=0.8, relheight=0.1)
-#Material manager button
-button_Create_Material = tk.Button(button_menu, text = 'Material Manager',font=("Helvetica", int(12*p_w)), command = Pressed_Material_Manager,bg="#e0e0d1")
-button_Create_Material.place(relx=0.1,rely=(pos_y+pos_y_os*5),relwidth=0.8, relheight=0.1)
 #Write GDML button
 button_Write_GDML = tk.Button(button_menu, text = 'Write GDML',font=("Helvetica", int(12*p_w)), command = Pressed_Write_GDML,bg="#e0e0d1")
 button_Write_GDML.place(relx=0.1,rely=(pos_y+pos_y_os*6),relwidth=0.8, relheight=0.1)
@@ -459,9 +372,6 @@ set_all_var = tk.IntVar()
 set_all_var.set(0)
 set_all_check_button = tk.Checkbutton(vol_properties_menu, text="Set All", font=("Helvetica", 16),variable=set_all_var)
 set_all_check_button.place(relx=0.05,rely=0.9,relwidth=0.15,relheight=0.05)
-#Change Material
-button_Change_Material = tk.Button(vol_properties_menu, text = 'Change Material',font=("Helvetica", int(12*p_w)), command = Pressed_Change_Material,bg="#e0e0d1")
-button_Change_Material.place(relx=0.05,rely=0.6,relwidth=0.9, relheight=0.1)
 #Change MMD
 button_Change_MMD = tk.Button(vol_properties_menu, text = 'Change MMD',font=("Helvetica", int(12*p_w)), command = Pressed_Change_MMD,bg="#e0e0d1")
 button_Change_MMD.place(relx=0.05,rely=0.7,relwidth=0.9, relheight=0.1)
